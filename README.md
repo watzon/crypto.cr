@@ -22,7 +22,32 @@ TODO: Write usage instructions here
 
 ## Development
 
-TODO: Write development instructions here
+There is a lot to do before this library will be ready, here are the things I would like to see implemented:
+
+- [ ] Algorithms
+  - [ ] Blake
+  - [ ] Fresh
+  - [ ] Fugue
+  - [ ] Groestl
+  - [ ] Keccak
+  - [ ] Nist5
+  - [ ] Qubit
+  - [ ] Scrypt's
+    - [ ] Scrypt
+    - [ ] Scrypt-Adaptive-N
+    - [ ] Scrypt-Jane
+  - [ ] SHA's
+    - [ ] SHA1
+    - [ ] SHA256
+    - [ ] SHA512
+  - [ ] Shavite3
+  - [ ] Skein
+  - [ ] X's
+    - [ ] X11
+    - [ ] X13
+    - [ ] X14
+    - [ ] X15
+    - [ ] X17
 
 ## Contributing
 
