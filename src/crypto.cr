@@ -5,3 +5,6 @@ require "./crypto/algorithms/*"
 module Crypto
   # TODO: Put your code here
 end
+
+hash = Crypto::Algorithms::SCrypt.hash("", "", n: 4)
+puts hash.hexstring
