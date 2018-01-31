@@ -1,6 +1,6 @@
 # crypto
 
-TODO: Write a description here
+WIP. Nothing is usable yet.
 
 ## Installation
 
@@ -9,7 +9,7 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   crypto:
-    github: [your-github-name]/crypto
+    github: watzon/crypto
 ```
 
 ## Usage
@@ -26,7 +26,7 @@ TODO: Write development instructions here
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/crypto/fork )
+1. Fork it ( https://github.com/watzon/crypto.cr/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
@@ -34,4 +34,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name]) Chris Watson - creator, maintainer
+- [watzon](https://github.com/watzon) Chris Watson - creator, maintainer
