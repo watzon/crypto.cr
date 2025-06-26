@@ -92,7 +92,7 @@ module Crypto::Asymmetric
       hex_str = value.to_s(16)
       hex_str = "0" + hex_str if hex_str.size.odd?
 
-      bytes = hex_str.scan(/../).map { |match| match[0].to_u8(16) }
+      bytes = hex_str.scan(/../).map(&.[0].to_u8(16))
 
       # Add leading zero if MSB is set (to ensure positive integer)
       if bytes.first >= 0x80
