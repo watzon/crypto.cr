@@ -68,10 +68,15 @@ salt = Random::Secure.random_bytes(16)  # 128-bit salt
 derived_key = kdf.derive(password, salt, 32)  # 32-byte key
 puts derived_key.hexstring
 
-# Future hash algorithm usage (when implemented)
-# hasher = Crypto::Hashes::SHA256.new
-# hash = hasher.hash("my input data")
-# puts hash # => hex string output
+# Hash algorithms
+hasher = Crypto::Hashes::SHA3_256.new
+hash = hasher.hash("my input data")
+puts hash # => hex string output
+
+# SHAKE extendable output functions
+shake = Crypto::Hashes::SHAKE256.new
+output = shake.shake("input data", 64)  # 64 bytes output
+puts output.hexstring
 ```
 
 ### SCrypt (Password Hashing)
@@ -157,13 +162,40 @@ sha256_bytes = sha256.hash_bytes(binary_data)
 puts sha256_bytes.hexstring
 ```
 
+### SHA-3 and SHAKE
+
+```crystal
+require "crypto"
+
+# SHA3-256
+sha3_256 = Crypto::Hashes::SHA3_256.new
+hash = sha3_256.hash("Hello World")
+puts hash  # => "e167f68d6563d75bb25f3aa49c29ef612d41352dc00606de7cbd630bb2665f51"
+
+# SHA3-512 
+sha3_512 = Crypto::Hashes::SHA3_512.new
+hash = sha3_512.hash("Hello World")
+puts hash  # => "3b62be6485a61c7a35dd3fef8ae32c61b44eddc58bc9ae3f0c62ac1e88354c14e80174e2d058e8c5c4cecc95ac228cd4cbf2e3f90b4ecf3a653ad7f2c6076ab8"
+
+# SHAKE128 - variable length output
+shake128 = Crypto::Hashes::SHAKE128.new
+output = shake128.shake("Hello", 32)  # 32 bytes output
+puts output.hexstring
+
+# SHAKE256 - for longer outputs
+shake256 = Crypto::Hashes::SHAKE256.new
+output = shake256.shake("Hello", 64)  # 64 bytes output
+puts output.hexstring
+```
+
 ### RSA Encryption/Decryption
 
 ```crystal
 require "crypto"
 
 # Use Telegram's public key for MTProto (via MTProto utilities)
-telegram_rsa = Crypto::Protocols::MTProto::RSAUtils.get_telegram_key
+telegram_keys = Crypto::Protocols::MTProto::RSAUtils.get_all_telegram_keys
+telegram_rsa = telegram_keys.values.first
 puts telegram_rsa.fingerprint_hex  # Shows key fingerprint
 
 # Encrypt data with PKCS#1 v1.5 padding (MTProto compatible)
@@ -259,7 +291,8 @@ decrypted = cipher.decrypt(encrypted)
 original_message = String.new(decrypted[0, message.size])
 
 # RSA with MTProto padding (now available!)
-rsa = Crypto::Protocols::MTProto::RSAUtils.get_telegram_key
+keys = Crypto::Protocols::MTProto::RSAUtils.get_all_telegram_keys
+rsa = keys.values.first
 encrypted = rsa.encrypt(data)  # Uses PKCS#1 v1.5 padding
 fingerprint = rsa.fingerprint_int  # For MTProto protocol
 
@@ -296,10 +329,13 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [x] Diffie-Hellman with 2048-bit groups
   - [x] DH parameter validation (safe prime checks)
   - [x] MTProto DH implementation with Telegram's parameters
-- [ ] **Utilities**
+- [x] **MTProto Utilities**
+  - [x] RSA utilities with Telegram public keys
+  - [x] DH utilities with MTProto parameters
+  - [x] Fingerprint calculation and validation
+  - [x] Key format conversion helpers
   - [ ] MTProto message padding
   - [ ] MTProto key derivation functions
-  - [ ] MTProto fingerprint calculation
   - [ ] Secure random number generation
 
 ### Phase 1: Core Hash Functions (Current)
@@ -308,7 +344,8 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [x] SHA-1 (legacy support)
   - [x] SHA-256
   - [x] SHA-512
-  - [ ] SHA-3 (Keccak winner)
+  - [x] SHA-3 (SHA3-224, SHA3-256, SHA3-384, SHA3-512)
+  - [x] SHAKE (SHAKE128, SHAKE256 - extendable output functions)
 - [ ] **Blake Family**
   - [ ] Blake2b
   - [ ] Blake2s
@@ -368,6 +405,7 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [x] MTProto DH parameter validation
   - [x] Safe prime validation and generator verification
   - [x] MTProto byte format conversion
+  - [x] MTProto utilities and helpers
   - [ ] ECDH (Curve25519, secp256k1)
   - [ ] X25519
 - [ ] **Digital Signatures**
@@ -381,6 +419,7 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [x] RSA key parsing (PEM/DER formats)
   - [x] RSA fingerprint calculation for MTProto
   - [x] Telegram public key integration
+  - [x] MTProto RSA utilities and helpers
   - [ ] RSA with OAEP padding
   - [ ] RSA key generation and validation
   - [ ] ElGamal
@@ -470,7 +509,11 @@ crystal spec
 ### Running Benchmarks
 
 ```bash
-crystal run benchmark/run.cr
+# Quick benchmark (recommended)
+crystal run benchmark/quick.cr --release
+
+# Comprehensive benchmark suite
+crystal run benchmark/run.cr --release
 ```
 
 ### Adding New Algorithms
@@ -575,13 +618,36 @@ For production use, consider:
 
 ## Performance
 
-Benchmarks on Apple M1 (coming soon):
+### Benchmark Results (Crystal vs OpenSSL)
 
-| Algorithm | Speed (MB/s) | Memory Usage |
-|-----------|-------------|--------------|
-| SCrypt    | TBD         | TBD          |
-| SHA-256   | TBD         | TBD          |
-| Blake2b   | TBD         | TBD          |
+Performance comparison on Apple M1 with Crystal 1.16.0 (release mode):
+
+| Algorithm | Crystal (MB/s) | OpenSSL (MB/s) | OpenSSL Advantage |
+|-----------|---------------|----------------|-------------------|
+| SHA-1     | 56.6          | 1192.6         | 21.1x faster      |
+| SHA-256   | 54.5          | 215.2          | 3.9x faster       |
+| AES-256-CTR | 51.2        | 730.4          | 14.3x faster      |
+
+### Running Benchmarks
+
+```bash
+# Quick benchmark (recommended)
+crystal run benchmark/quick.cr --release
+
+# Simple benchmark with detailed output
+crystal run benchmark/simple.cr --release
+
+# Full comprehensive benchmark suite
+crystal run benchmark/run.cr --release
+```
+
+### Performance Notes
+
+- **Pure Crystal implementations** are 4-21x slower than OpenSSL (as expected)
+- **Educational/experimental use**: Perfect for learning cryptographic algorithms
+- **Production systems**: Use OpenSSL bindings for performance and security
+- **Memory usage**: Pure Crystal implementations use more memory due to GC overhead
+- **Constant-time**: OpenSSL implementations have better protection against timing attacks
 
 ## Contributing
 

@@ -2,6 +2,14 @@
 
 This document outlines the implementation priorities for the crypto.cr library, with special focus on MTProto protocol support.
 
+## Recent Progress
+
+### December 2024
+- ✅ **SHA-3 Implementation** - Complete implementation of SHA3-224, SHA3-256, SHA3-384, SHA3-512
+- ✅ **SHAKE Implementation** - SHAKE128 and SHAKE256 extendable output functions
+- ✅ **Keccak Permutation** - Full Keccak-f[1600] implementation with proper Rho, Pi, Chi, Theta, and Iota steps
+- ✅ **Test Coverage** - All SHA-3 and SHAKE variants passing NIST test vectors
+
 ## ⚠️ Security Notice
 
 All implementations in this library are **pure Crystal** and should be considered **experimental**. They are:
@@ -44,7 +52,11 @@ These components are essential for MTProto protocol implementation and should be
 - [x] Security validations and protection against small subgroup attacks
 - [x] MTProto byte format conversion (256-byte network format)
 
-### 5. MTProto-Specific Utilities
+### 5. MTProto-Specific Utilities ✅
+- [x] RSA utilities with Telegram public keys
+- [x] DH utilities with MTProto-specific parameters
+- [x] Fingerprint calculation and validation
+- [x] Key format conversion helpers
 - [ ] Message padding (12-1024 bytes)
 - [ ] Auth key generation
 - [ ] Message key derivation (KDF)
@@ -53,12 +65,14 @@ These components are essential for MTProto protocol implementation and should be
 ## Secondary Priority: Core Cryptography
 
 ### Hash Functions
+- [x] **SHA-3** (SHA3-224, SHA3-256, SHA3-384, SHA3-512) ✅
+- [x] **SHAKE** (SHAKE128, SHAKE256 - extendable output functions) ✅
 - [ ] Blake2b/Blake2s
 - [ ] Blake3
 - [ ] MD5 (legacy only)
-- [ ] Keccak/SHA-3
 
-### Password Hashing
+### Password Hashing & KDF
+- [x] **SCrypt** (completed)
 - [ ] Argon2 (all variants)
 - [ ] bcrypt
 - [ ] PBKDF2
