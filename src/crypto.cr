@@ -10,14 +10,14 @@ require "./crypto/kdf/*"
 # Ciphers
 require "./crypto/ciphers/*"
 
-# Asymmetric algorithms (when implemented)
-# require "./crypto/asymmetric/*"
+# Asymmetric algorithms
+require "./crypto/asymmetric/*"
 
 # MAC algorithms (when implemented)
 # require "./crypto/mac/*"
 
-# Protocols (when implemented)
-# require "./crypto/protocols/**/*"
+# Protocols
+require "./crypto/protocols/mtproto/rsa_utils"
 
 # Utilities (when implemented)
 # require "./crypto/utils/*"

@@ -157,6 +157,42 @@ sha256_bytes = sha256.hash_bytes(binary_data)
 puts sha256_bytes.hexstring
 ```
 
+### RSA Encryption/Decryption
+
+```crystal
+require "crypto"
+
+# Use Telegram's public key for MTProto
+telegram_rsa = Crypto::Asymmetric::RSA.telegram_public_key
+puts telegram_rsa.fingerprint_hex  # Shows key fingerprint
+
+# Encrypt data with PKCS#1 v1.5 padding (MTProto compatible)
+message = "Secret message"
+encrypted = telegram_rsa.encrypt(message.to_slice)
+# Note: Decryption requires private key (not available for Telegram's key)
+
+# Create custom RSA key (for testing/other purposes)
+# These are example values - use proper key generation in practice
+n = BigInt.new("123456789...")  # Modulus
+e = BigInt.new("65537")         # Public exponent
+d = BigInt.new("987654321...")  # Private exponent (for decryption)
+custom_rsa = Crypto::Asymmetric::RSA.new(n, e, d)
+
+# Encrypt and decrypt
+plaintext = "Hello RSA!".to_slice
+ciphertext = custom_rsa.encrypt(plaintext)
+decrypted = custom_rsa.decrypt(ciphertext)
+puts String.new(decrypted)  # => "Hello RSA!"
+
+# Get key fingerprint for MTProto protocol
+fingerprint = custom_rsa.fingerprint_int
+puts "Fingerprint: #{fingerprint}"
+
+# Export public key in PEM format
+pem_key = custom_rsa.to_pem
+puts pem_key
+```
+
 ### MTProto Usage
 
 ```crystal
@@ -179,9 +215,10 @@ decrypted = cipher.decrypt(encrypted)
 # Extract original message
 original_message = String.new(decrypted[0, message.size])
 
-# RSA with MTProto padding (when implemented)
-rsa = Crypto::Asymmetric::RSA.new(public_key)
-encrypted = rsa.encrypt_mtproto(data)
+# RSA with MTProto padding (now available!)
+rsa = Crypto::Asymmetric::RSA.telegram_public_key
+encrypted = rsa.encrypt(data)  # Uses PKCS#1 v1.5 padding
+fingerprint = rsa.fingerprint_int  # For MTProto protocol
 
 # DH parameter validation (when implemented)
 dh = Crypto::KeyExchange::DH.new
@@ -205,8 +242,10 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [x] SHA-256 (native Crystal implementation)
   - [x] SHA-1 (for legacy compatibility)
   - [x] SHA-512
-- [ ] **Key Exchange & Asymmetric**
-  - [ ] RSA with custom MTProto padding
+- [x] **Key Exchange & Asymmetric**
+  - [x] RSA with PKCS#1 v1.5 padding (MTProto compatible)
+  - [x] RSA public key fingerprint calculation
+  - [x] Telegram public key support
   - [ ] Diffie-Hellman with 2048-bit groups
   - [ ] DH parameter validation (safe prime checks)
 - [ ] **Utilities**
@@ -287,9 +326,12 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [ ] RSA signatures
   - [ ] RSA-PSS
   - [ ] Schnorr signatures
-- [ ] **Public Key Encryption**
+- [x] **Public Key Encryption**
+  - [x] RSA with PKCS#1 v1.5 padding - *Required for MTProto*
+  - [x] RSA key parsing (PEM/DER formats)
+  - [x] RSA fingerprint calculation for MTProto
+  - [x] Telegram public key integration
   - [ ] RSA with OAEP padding
-  - [ ] RSA with PKCS#1 v1.5 padding - *Required for MTProto*
   - [ ] RSA key generation and validation
   - [ ] ElGamal
 

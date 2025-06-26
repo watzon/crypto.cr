@@ -40,6 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - All implementations follow NIST FIPS 180-4 specification
   - Comprehensive test coverage with NIST test vectors
   - Performance-optimized using Bytes instead of arrays
+- **RSA asymmetric encryption implementation**
+  - **RSA core operations** - Modular exponentiation, key handling, encryption/decryption
+  - **PKCS#1 v1.5 padding** - MTProto-compatible padding scheme (not OAEP)
+  - **Key format support** - PEM/DER parsing and export capabilities
+  - **MTProto integration** - SHA-1 based fingerprint calculation, Telegram public keys
+  - **Security features** - Proper random padding, key validation, secure operations
+  - **MTProto utilities** - Dedicated utilities for Telegram protocol compatibility
 
 ### Changed
 - Updated Crystal version requirement from 0.24.1 to >= 1.16.0
