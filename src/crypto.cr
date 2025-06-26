@@ -13,11 +13,15 @@ require "./crypto/ciphers/*"
 # Asymmetric algorithms
 require "./crypto/asymmetric/*"
 
+# Key Exchange algorithms
+require "./crypto/key_exchange/*"
+
 # MAC algorithms (when implemented)
 # require "./crypto/mac/*"
 
 # Protocols
 require "./crypto/protocols/mtproto/rsa_utils"
+require "./crypto/protocols/mtproto/dh_utils"
 
 # Utilities (when implemented)
 # require "./crypto/utils/*"
