@@ -225,7 +225,7 @@ module Crypto::Asymmetric
     # Encrypt with RSA using PKCS#1 v1.5 padding (required for MTProto)
     def encrypt(data : Bytes) : Bytes
       raise "Cannot encrypt: no public key" if @key.n.nil? || @key.e.nil?
-      raise "Data too large for RSA key" if data.size >= (@key.key_size - 88) // 8
+      raise "Data too large for RSA key" if data.size > (@key.key_size // 8) - 11
 
       # Apply PKCS#1 v1.5 padding
       padded = pkcs1_v15_pad(data, @key.key_size // 8, pad_type: 2)
@@ -234,7 +234,7 @@ module Crypto::Asymmetric
       message = bytes_to_bigint(padded)
 
       # RSA encryption: c = m^e mod n
-      ciphertext = message ** @key.e % @key.n
+      ciphertext = mod_pow(message, @key.e, @key.n)
 
       # Convert back to bytes
       bigint_to_bytes(ciphertext, @key.key_size // 8)
@@ -253,7 +253,7 @@ module Crypto::Asymmetric
         # Use Chinese Remainder Theorem for faster decryption
         message = rsa_crt_decrypt(ciphertext)
       else
-        message = ciphertext ** @key.d.not_nil! % @key.n
+        message = mod_pow(ciphertext, @key.d.not_nil!, @key.n)
       end
 
       # Convert back to bytes
@@ -301,8 +301,8 @@ module Crypto::Asymmetric
       qinv = @key.qinv.not_nil!
 
       # Chinese Remainder Theorem
-      m1 = ciphertext ** dp % p
-      m2 = ciphertext ** dq % q
+      m1 = mod_pow(ciphertext, dp, p)
+      m2 = mod_pow(ciphertext, dq, q)
 
       h = ((m1 - m2) * qinv) % p
       message = m2 + (h * q)

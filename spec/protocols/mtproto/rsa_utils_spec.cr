@@ -151,6 +151,13 @@ describe Crypto::Protocols::MTProto::RSAUtils do
       loaded_key.key_size.should eq(original_key.key_size)
     end
     
-    pending "creates key from DER bytes - DER parsing needs refinement"
+    it "creates key from PEM test data" do
+      # Use the real PEM data from our OpenSSL-generated key
+      pem_string = TestKeys.create_rsa_from_pem
+      loaded_key = Crypto::Protocols::MTProto::RSAUtils.from_pem_string(pem_string)
+      
+      loaded_key.key_size.should eq(2048)
+      loaded_key.fingerprint.size.should eq(8)
+    end
   end
 end
