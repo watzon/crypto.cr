@@ -35,11 +35,14 @@ These components are essential for MTProto protocol implementation and should be
 - [x] Modular exponentiation and key operations
 - [x] MTProto-specific utilities and helpers
 
-### 4. Diffie-Hellman
-- [ ] DH parameter generation
-- [ ] DH key exchange implementation
-- [ ] Safe prime validation (2048-bit)
-- [ ] Generator validation (2, 3, 4, 5, 6, 7)
+### 4. Diffie-Hellman ✅
+- [x] DH parameter generation and validation
+- [x] DH key exchange implementation (keypair generation, shared secret)
+- [x] Safe prime validation (2048-bit) - p = 2q + 1 where both p and q are prime
+- [x] Generator validation for safe primes (g^q mod p = p-1)
+- [x] MTProto-specific implementation with Telegram's 2048-bit prime
+- [x] Security validations and protection against small subgroup attacks
+- [x] MTProto byte format conversion (256-byte network format)
 
 ### 5. MTProto-Specific Utilities
 - [ ] Message padding (12-1024 bytes)

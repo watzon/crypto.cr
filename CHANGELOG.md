@@ -47,6 +47,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **MTProto integration** - SHA-1 based fingerprint calculation, Telegram public keys
   - **Security features** - Proper random padding, key validation, secure operations
   - **MTProto utilities** - Dedicated utilities for Telegram protocol compatibility
+- **Diffie-Hellman key exchange implementation**
+  - **DH core operations** - Parameter generation, keypair generation, shared secret computation
+  - **Safe prime validation** - Mathematical verification of p = 2q + 1 structure
+  - **Generator validation** - Ensures generators produce correct subgroups for safe primes
+  - **MTProto DH support** - Uses Telegram's official 2048-bit safe prime
+  - **Security features** - Protection against small subgroup attacks, secure random keys
+  - **MTProto byte format** - 256-byte network serialization compatible with Telegram
+  - **Comprehensive validation** - Parameter, key, and shared secret security checks
 
 ### Changed
 - Updated Crystal version requirement from 0.24.1 to >= 1.16.0

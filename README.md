@@ -193,6 +193,49 @@ pem_key = custom_rsa.to_pem
 puts pem_key
 ```
 
+### Diffie-Hellman Key Exchange
+
+```crystal
+require "crypto"
+
+# Create DH parameters (prime p and generator g)
+p = BigInt.new("your_prime_here")
+g = BigInt.new("2")
+dh_params = Crypto::DH::DHParameters.new(p, g)
+
+# Generate keypairs for Alice and Bob
+alice_dh = Crypto::DH::DiffieHellman.new(dh_params)
+alice_private, alice_public = alice_dh.generate_keypair
+
+bob_dh = Crypto::DH::DiffieHellman.new(dh_params)
+bob_private, bob_public = bob_dh.generate_keypair
+
+# Compute shared secrets (should be identical)
+shared_secret_alice = alice_private.compute_shared_secret(bob_public)
+shared_secret_bob = bob_private.compute_shared_secret(alice_public)
+puts shared_secret_alice == shared_secret_bob  # => true
+
+# MTProto-specific DH (recommended for Telegram protocols)
+# Uses Telegram's official 2048-bit safe prime
+dh_params = Crypto::Protocols::MTProto::DHUtils.create_mtproto_parameters(2)
+alice_keypair = Crypto::Protocols::MTProto::DHUtils.generate_mtproto_keypair(2)
+bob_keypair = Crypto::Protocols::MTProto::DHUtils.generate_mtproto_keypair(2)
+
+# Convert public keys to MTProto byte format (256 bytes)
+alice_public_bytes = Crypto::Protocols::MTProto::DHUtils.public_key_to_mtproto_bytes(alice_keypair[:public])
+bob_public_bytes = Crypto::Protocols::MTProto::DHUtils.public_key_to_mtproto_bytes(bob_keypair[:public])
+
+# Parse public keys from bytes
+alice_public_parsed = Crypto::Protocols::MTProto::DHUtils.public_key_from_mtproto_bytes(alice_public_bytes)
+bob_public_parsed = Crypto::Protocols::MTProto::DHUtils.public_key_from_mtproto_bytes(bob_public_bytes)
+
+# Compute shared secrets
+shared_secret = Crypto::Protocols::MTProto::DHUtils.compute_mtproto_shared_secret(
+  alice_keypair[:private], 
+  bob_public_parsed
+)
+```
+
 ### MTProto Usage
 
 ```crystal
@@ -220,11 +263,15 @@ rsa = Crypto::Protocols::MTProto::RSAUtils.get_telegram_key
 encrypted = rsa.encrypt(data)  # Uses PKCS#1 v1.5 padding
 fingerprint = rsa.fingerprint_int  # For MTProto protocol
 
-# DH parameter validation (when implemented)
-dh = Crypto::KeyExchange::DH.new
-if dh.validate_mtproto_params(p, g)
-  shared_secret = dh.compute_shared_secret(public_key)
-end
+# DH key exchange (now available!)
+dh_params = Crypto::Protocols::MTProto::DHUtils.create_mtproto_parameters(2)
+alice_keypair = Crypto::Protocols::MTProto::DHUtils.generate_mtproto_keypair(2)
+bob_keypair = Crypto::Protocols::MTProto::DHUtils.generate_mtproto_keypair(2)
+
+# Exchange public keys and compute shared secret
+shared_secret_alice = alice_keypair[:private].compute_shared_secret(bob_keypair[:public])
+shared_secret_bob = bob_keypair[:private].compute_shared_secret(alice_keypair[:public])
+# shared_secret_alice == shared_secret_bob
 ```
 
 ## Roadmap
@@ -246,8 +293,9 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [x] RSA with PKCS#1 v1.5 padding (MTProto compatible)
   - [x] RSA public key fingerprint calculation
   - [x] Telegram public key support
-  - [ ] Diffie-Hellman with 2048-bit groups
-  - [ ] DH parameter validation (safe prime checks)
+  - [x] Diffie-Hellman with 2048-bit groups
+  - [x] DH parameter validation (safe prime checks)
+  - [x] MTProto DH implementation with Telegram's parameters
 - [ ] **Utilities**
   - [ ] MTProto message padding
   - [ ] MTProto key derivation functions
@@ -315,11 +363,13 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [ ] MTProto message authentication
 
 ### Phase 4: Asymmetric Cryptography
-- [ ] **Key Exchange**
+- [x] **Key Exchange**
+  - [x] DH (Diffie-Hellman) - *Required for MTProto*
+  - [x] MTProto DH parameter validation
+  - [x] Safe prime validation and generator verification
+  - [x] MTProto byte format conversion
   - [ ] ECDH (Curve25519, secp256k1)
   - [ ] X25519
-  - [ ] DH (Diffie-Hellman) - *Required for MTProto*
-  - [ ] MTProto DH parameter validation
 - [ ] **Digital Signatures**
   - [ ] ECDSA
   - [ ] EdDSA (Ed25519)
