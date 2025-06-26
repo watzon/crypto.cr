@@ -187,7 +187,7 @@ module Crypto::Asymmetric
       # Skip SEQUENCE tag and length
       raise "Invalid DER: expected SEQUENCE" unless der_bytes[offset] == 0x30
       offset += 1
-      length, offset = parse_der_length(der_bytes, offset)
+      _, offset = parse_der_length(der_bytes, offset)
 
       # For SubjectPublicKeyInfo, skip the AlgorithmIdentifier
       if der_bytes[offset] == 0x30  # Another SEQUENCE (AlgorithmIdentifier)
@@ -198,7 +198,7 @@ module Crypto::Asymmetric
         # Next should be BIT STRING containing the actual key
         raise "Invalid DER: expected BIT STRING" unless der_bytes[offset] == 0x03
         offset += 1
-        bit_length, offset = parse_der_length(der_bytes, offset)
+        _, offset = parse_der_length(der_bytes, offset)
         offset += 1  # Skip unused bits byte
 
         # Now we should have the RSA public key SEQUENCE
@@ -207,7 +207,7 @@ module Crypto::Asymmetric
 
       # Parse RSA public key SEQUENCE
       offset += 1
-      seq_length, offset = parse_der_length(der_bytes, offset)
+      _, offset = parse_der_length(der_bytes, offset)
 
       # Parse modulus (n)
       raise "Invalid DER: expected INTEGER" unless der_bytes[offset] == 0x02
@@ -215,21 +215,12 @@ module Crypto::Asymmetric
 
       # Parse public exponent (e)
       raise "Invalid DER: expected INTEGER" unless der_bytes[offset] == 0x02
-      e, offset = parse_der_integer(der_bytes, offset)
+      e, _ = parse_der_integer(der_bytes, offset)
 
       key = RSAKey.new(n, e)
       new(key)
     end
 
-    # Create RSA instance with Telegram's public key
-    def self.telegram_public_key : RSA
-      # Use one of the keys from MTProto RSAUtils
-      n = BigInt.new("32317006071311007300714876688669951960444102669715484032130345427524655138867890893197201411522913463688717960921898019494119559150490921095088152386448283120630877367300996091750197750389652106796057638384067568276792218642619756161838094338476170470581645852036305042887575891541065808607552399123930385521914333389668342420684974786564569494856176035326322058077805659331026192708460314150258592864177116725943603718461857357598351152301645904403697613233287231227125684710820209725157101726931323469678542580656697935045997268352998638215525166389437335543602135433229604645318478604952148193555853611059596230657")
-      e = BigInt.new("65537")
-
-      key = RSAKey.new(n, e)
-      new(key)
-    end
 
     # Encrypt with RSA using PKCS#1 v1.5 padding (required for MTProto)
     def encrypt(data : Bytes) : Bytes
@@ -295,6 +286,11 @@ module Crypto::Asymmetric
         result |= byte.to_i64 << (i * 8)
       end
       result
+    end
+
+    # Get RSA fingerprint as hex string
+    def fingerprint_hex : String
+      fingerprint.hexstring
     end
 
     private def rsa_crt_decrypt(ciphertext : BigInt) : BigInt
@@ -387,25 +383,25 @@ module Crypto::Asymmetric
     private def bigint_to_bytes(value : BigInt, length : Int32) : Bytes
       result = Bytes.new(length)
       temp = value
-      
+
       (length - 1).downto(0) do |i|
         result[i] = (temp & 0xff).to_u8
         temp >>= 8
       end
-      
+
       result
     end
-    
+
     # Modular exponentiation: base^exp mod modulus
     # Uses binary exponentiation to avoid overflow
     private def mod_pow(base : BigInt, exp : BigInt, modulus : BigInt) : BigInt
       return BigInt.new(1) if exp == 0
       return BigInt.new(0) if modulus == 1
-      
+
       result = BigInt.new(1)
       base = base % modulus
       exp_copy = exp
-      
+
       while exp_copy > 0
         if exp_copy.odd?
           result = (result * base) % modulus
@@ -413,7 +409,7 @@ module Crypto::Asymmetric
         exp_copy >>= 1
         base = (base * base) % modulus
       end
-      
+
       result
     end
 

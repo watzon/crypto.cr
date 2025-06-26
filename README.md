@@ -162,8 +162,8 @@ puts sha256_bytes.hexstring
 ```crystal
 require "crypto"
 
-# Use Telegram's public key for MTProto
-telegram_rsa = Crypto::Asymmetric::RSA.telegram_public_key
+# Use Telegram's public key for MTProto (via MTProto utilities)
+telegram_rsa = Crypto::Protocols::MTProto::RSAUtils.get_telegram_key
 puts telegram_rsa.fingerprint_hex  # Shows key fingerprint
 
 # Encrypt data with PKCS#1 v1.5 padding (MTProto compatible)
@@ -216,7 +216,7 @@ decrypted = cipher.decrypt(encrypted)
 original_message = String.new(decrypted[0, message.size])
 
 # RSA with MTProto padding (now available!)
-rsa = Crypto::Asymmetric::RSA.telegram_public_key
+rsa = Crypto::Protocols::MTProto::RSAUtils.get_telegram_key
 encrypted = rsa.encrypt(data)  # Uses PKCS#1 v1.5 padding
 fingerprint = rsa.fingerprint_int  # For MTProto protocol
 

@@ -96,11 +96,11 @@ describe Crypto::Asymmetric::RSA do
   end
   
   describe "MTProto specific features" do
-    it "creates Telegram public key" do
-      telegram_rsa = Crypto::Asymmetric::RSA.telegram_public_key
+    it "calculates fingerprint correctly" do
+      # This test moved to MTProto utils spec since Telegram key access is now there
+      rsa = Crypto::Asymmetric::RSA.new(TestKeys::TEST_N, TestKeys::TEST_E)
       
-      telegram_rsa.key_size.should be > 1024  # Should be at least 1024-bit
-      telegram_rsa.fingerprint.size.should eq(8)
+      rsa.fingerprint.size.should eq(8)
     end
     
     it "calculates fingerprint as integer" do
