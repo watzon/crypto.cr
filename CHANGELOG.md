@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2025-06-26
+
 ### Added
 - Comprehensive README with detailed roadmap for a fully featured crypto library
 - CHANGELOG.md for tracking version history
@@ -55,6 +57,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Security features** - Protection against small subgroup attacks, secure random keys
   - **MTProto byte format** - 256-byte network serialization compatible with Telegram
   - **Comprehensive validation** - Parameter, key, and shared secret security checks
+- **SHA-3 hash function implementations**
+  - **SHA3-224** (224-bit) - Latest NIST standard hash function
+  - **SHA3-256** (256-bit) - Modern secure hash standard
+  - **SHA3-384** (384-bit) - High security SHA-3 variant
+  - **SHA3-512** (512-bit) - Maximum security SHA-3 variant
+  - **SHAKE128** - Variable-length extendable output function
+  - **SHAKE256** - High-security variable-length output function
+  - All implementations follow NIST FIPS 202 specification
+  - Optimized Keccak-f[1600] permutation using native Crystal
+- **Comprehensive benchmark suite**
+  - Performance comparisons across all hash algorithms
+  - Throughput measurements for various input sizes
+  - Memory usage analysis and optimization metrics
+  - Cross-algorithm performance comparison tools
 
 ### Changed
 - Updated Crystal version requirement from 0.24.1 to >= 1.16.0
