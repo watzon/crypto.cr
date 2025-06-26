@@ -33,6 +33,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Forward error propagation as per specification
   - Compatible with OpenSSL's IGE implementation
   - Verified against OpenSSL test vectors and TDLib compatibility tests
+- **Native SHA hash function implementations**
+  - **SHA-1** (160-bit) - Legacy compatibility and MTProto auth key generation
+  - **SHA-256** (256-bit) - Replaces OpenSSL dependency with pure Crystal implementation
+  - **SHA-512** (512-bit) - High-security hashing for modern protocols
+  - All implementations follow NIST FIPS 180-4 specification
+  - Comprehensive test coverage with NIST test vectors
+  - Performance-optimized using Bytes instead of arrays
 
 ### Changed
 - Updated Crystal version requirement from 0.24.1 to >= 1.16.0

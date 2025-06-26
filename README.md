@@ -131,6 +131,32 @@ ciphertext = cipher.encrypt(padded)
 decrypted = cipher.decrypt(ciphertext)
 ```
 
+### SHA Hashing
+
+```crystal
+require "crypto"
+
+# SHA-1 (legacy compatibility)
+sha1 = Crypto::Hashes::Sha1.new
+hash1 = sha1.hash("Hello World")
+puts hash1  # => "0a4d55a8d778e5022fab701977c5d840bbc486d0"
+
+# SHA-256 (recommended)
+sha256 = Crypto::Hashes::Sha256.new
+hash256 = sha256.hash("Hello World")
+puts hash256  # => "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e"
+
+# SHA-512 (highest security)
+sha512 = Crypto::Hashes::Sha512.new
+hash512 = sha512.hash("Hello World")
+puts hash512  # => "2c74fd17edafd80e8447b0d46741ee243b7eb74dd2149a0ab1b9246fb30382f27e853d8585719e0e67cbda0daa8f51671064615d645ae27acb15bfb1447f459b"
+
+# Binary data hashing
+binary_data = Bytes[0xde, 0xad, 0xbe, 0xef]
+sha256_bytes = sha256.hash_bytes(binary_data)
+puts sha256_bytes.hexstring
+```
+
 ### MTProto Usage
 
 ```crystal
@@ -175,10 +201,10 @@ For MTProto implementation, the following cryptographic primitives are essential
 - [x] **Encryption**
   - [x] AES-256-IGE mode (encryption/decryption)
   - [x] AES-256-CTR mode
-- [ ] **Hashing**
-  - [x] SHA-256 (via OpenSSL, needs native implementation)
-  - [ ] SHA-1 (for legacy compatibility)
-  - [ ] SHA-512
+- [x] **Hashing**
+  - [x] SHA-256 (native Crystal implementation)
+  - [x] SHA-1 (for legacy compatibility)
+  - [x] SHA-512
 - [ ] **Key Exchange & Asymmetric**
   - [ ] RSA with custom MTProto padding
   - [ ] Diffie-Hellman with 2048-bit groups
@@ -191,10 +217,10 @@ For MTProto implementation, the following cryptographic primitives are essential
 
 ### Phase 1: Core Hash Functions (Current)
 - [x] **SCrypt** - Memory-hard password hashing
-- [ ] **SHA Family**
-  - [ ] SHA-1 (legacy support)
-  - [ ] SHA-256
-  - [ ] SHA-512
+- [x] **SHA Family**
+  - [x] SHA-1 (legacy support)
+  - [x] SHA-256
+  - [x] SHA-512
   - [ ] SHA-3 (Keccak winner)
 - [ ] **Blake Family**
   - [ ] Blake2b

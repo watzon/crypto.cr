@@ -22,11 +22,10 @@ These components are essential for MTProto protocol implementation and should be
 - [x] Proper IGE mode chaining
 - [x] Test vectors from OpenSSL and TDLib
 
-### 2. SHA Hash Functions
-- [x] SHA-256 (currently via OpenSSL)
-- [ ] Native SHA-256 implementation
-- [ ] SHA-1 (for legacy auth key generation)
-- [ ] SHA-512 (for newer protocols)
+### 2. SHA Hash Functions ✅
+- [x] SHA-256 (native Crystal implementation)
+- [x] SHA-1 (for legacy auth key generation)
+- [x] SHA-512 (for newer protocols)
 
 ### 3. RSA Implementation
 - [ ] RSA key parsing (PEM/DER formats)
