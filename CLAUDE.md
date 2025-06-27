@@ -126,7 +126,11 @@ end
 
 ## Current Implementation Status
 
-- **Implemented**: SCrypt (fully functional with tests)
+- **Hash Functions**: SHA-1, SHA-256, SHA-512, SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128, SHAKE256, CRC32
+- **KDF**: SCrypt (fully functional with tests)
+- **Ciphers**: AES (128/192/256-bit), AES-CTR, AES-IGE
+- **Asymmetric**: RSA with PKCS#1 v1.5 padding, Diffie-Hellman key exchange
+- **Protocols**: MTProto utilities for RSA and DH operations
 - **Planned**: Blake, Fresh, Fugue, Groestl, Keccak, NIST5, Qubit, SHA1, SHA256, Shavite3, Skein, X11-X17, and others
 - **Note**: Remove the test code in src/crypto.cr before release
 

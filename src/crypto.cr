@@ -28,7 +28,7 @@ require "./crypto/protocols/mtproto/dh_utils"
 
 module Crypto
   # Version of the crypto library
-  VERSION = "0.1.0"
+  VERSION = "0.2.0"
   
   # Main entry point for the crypto library
 end

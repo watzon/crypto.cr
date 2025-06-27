@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **CRC32 hash function implementation**
+  - IEEE 802.3 polynomial (0xEDB88320) - standard CRC32 used in ZIP, PNG, and MTProto
+  - Pre-computed lookup table for optimized performance
+  - Support for both string and binary data input
+  - Big-endian 4-byte output format compatible with MTProto protocol
+  - Comprehensive test coverage with standard test vectors
+  - Class and instance methods for flexible usage
+
 ## [0.2.0] - 2025-06-26
 
 ### Added
