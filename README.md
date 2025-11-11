@@ -263,9 +263,49 @@ bob_public_parsed = Crypto::Protocols::MTProto::DHUtils.public_key_from_mtproto_
 
 # Compute shared secrets
 shared_secret = Crypto::Protocols::MTProto::DHUtils.compute_mtproto_shared_secret(
-  alice_keypair[:private], 
+  alice_keypair[:private],
   bob_public_parsed
 )
+```
+
+### ECDSA Digital Signatures
+
+```crystal
+require "crypto"
+
+# Create ECDSA instance with P-256 curve and SHA-256
+ecdsa = Crypto::Asymmetric::ECDSA.p256_sha256
+
+# Sign a message
+message = "Hello, ECDSA!".to_slice
+signature = ecdsa.sign(message)
+
+# Verify the signature
+is_valid = ecdsa.verify(message, signature)
+puts "Signature valid: #{is_valid}"  # => true
+
+# Tampered message verification fails
+tampered = "Hello, ECDSA?".to_slice
+puts ecdsa.verify(tampered, signature)  # => false
+
+# Use P-384 with SHA-384
+ecdsa_p384 = Crypto::Asymmetric::ECDSA.p384_sha384
+signature_p384 = ecdsa_p384.sign(message)
+puts ecdsa_p384.verify(message, signature_p384)  # => true
+
+# Generate from existing private key
+private_key = BigInt.new("your_private_key_here")
+ecdsa_custom = Crypto::Asymmetric::ECDSA.p256_sha256(private_key)
+
+# Export and import keys
+public_key_bytes = ecdsa.public_key
+compressed_public_key = ecdsa.public_key_compressed
+private_key_bytes = ecdsa.export_private_key
+
+# Import keys
+curve = Crypto::Asymmetric::P256.get
+public_point = Crypto::Asymmetric::ECDSA.import_public_key(public_key_bytes, curve)
+key_pair = Crypto::Asymmetric::ECDSA.import_private_key(private_key_bytes, curve)
 ```
 
 ### MTProto Usage
@@ -408,8 +448,8 @@ For MTProto implementation, the following cryptographic primitives are essential
   - [x] MTProto utilities and helpers
   - [ ] ECDH (Curve25519, secp256k1)
   - [ ] X25519
-- [ ] **Digital Signatures**
-  - [ ] ECDSA
+- [x] **Digital Signatures**
+  - [x] ECDSA (P-256, P-384) with SHA-256 and SHA-384
   - [ ] EdDSA (Ed25519)
   - [ ] RSA signatures
   - [ ] RSA-PSS
